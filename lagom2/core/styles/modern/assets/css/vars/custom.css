@@ -1,0 +1,40 @@
+.main-banner {
+    padding-bottom: 0 !important;
+}
+.login-body>.login-title {
+    font-size: 25px !important;
+}
+
+.package-content {
+    max-height: 145px;
+    overflow-y: auto;
+    flex: initial;
+}
+
+.package-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+.package-content::-webkit-scrollbar-track {
+    background: rgb(243 243 243);
+    border-radius: 10px;
+}
+
+.package-content::-webkit-scrollbar-thumb {
+    background: rgb(242 38 64);
+    border-radius: 10px;
+  }
+
+.package-content::-webkit-scrollbar-thumb:hover {
+    background: rgb(100, 100, 100);
+    border-radius: 10px;
+  }
+
+.package-content::-webkit-scrollbar-thumb:active {
+    background: rgb(68, 68, 68);
+    border-radius: 10px;
+}
+.package-content em {
+    font-size: 95%;
+    color: #9b9b9b;
+}
