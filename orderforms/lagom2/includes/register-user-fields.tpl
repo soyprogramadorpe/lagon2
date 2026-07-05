@@ -1,6 +1,22 @@
 {if file_exists("templates/orderforms/$carttpl/includes/overwrites/register-user-fields.tpl")}
     {include file="templates/orderforms/$carttpl/includes/overwrites/register-user-fields.tpl"}
 {else}
+    {* EXTRAER CAMPOS PERSONALIZADOS DNI, RUC Y FACTURA *}
+    {assign var="cf_dni" value=false}
+    {assign var="cf_ruc" value=false}
+    {assign var="cf_factura" value=false}
+    {if $customfields}
+        {foreach from=$customfields key=num item=customfield}
+            {if $customfield.name eq 'DNI'}
+                {assign var="cf_dni" value=$customfield}
+            {elseif $customfield.name eq 'RUC'}
+                {assign var="cf_ruc" value=$customfield}
+            {elseif $customfield.name eq 'Deseo una factura (SUNAT PERÚ)'}
+                {assign var="cf_factura" value=$customfield}
+            {/if}
+        {/foreach}
+    {/if}
+    
     <div>{include file="orderforms/$carttpl/linkedaccounts.tpl" linkContext="checkout-new"}</div>
     {if $SocialMediaLogInAddonIsActive && $social_media_login_integration} 
         <div class="social-media social-media-login">
@@ -14,6 +30,21 @@
     {/if}
  
     <h6>{$LANG.orderForm.personalInformation}</h6>
+    
+    {if $cf_dni}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label {if $cf_dni.required}label-required{/if}" for="customfield{$cf_dni.id}">
+                    {$cf_dni.name} {if !$cf_dni.required}({$LANG.orderForm.optional}){/if}
+                </label>
+                {$cf_dni.input|replace:'class="':'class="fe-dni-input '}
+                {if $cf_dni.description}<span class="help-block">{$cf_dni.description}</span>{/if}
+            </div>
+        </div>
+    </div>
+    {/if}
+
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
@@ -51,6 +82,21 @@
         </div>
     </div>
     <h6 class="m-t-2x">{$LANG.orderForm.billingAddress}</h6>
+    
+    {if $cf_ruc}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label {if $cf_ruc.required}label-required{/if}" for="customfield{$cf_ruc.id}">
+                    {$cf_ruc.name} {if !$cf_ruc.required}({$LANG.orderForm.optional}){/if}
+                </label>
+                {$cf_ruc.input|replace:'class="':'class="fe-ruc-input '}
+                {if $cf_ruc.description}<span class="help-block">{$cf_ruc.description}</span>{/if}
+            </div>
+        </div>
+    </div>
+    {/if}
+
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
@@ -128,10 +174,28 @@
             </div>
         </div>
     </div>
+    {if $cf_factura}
+        <div style="display:none;" id="hidden-factura-container">
+            {$cf_factura.input|replace:'type="checkbox"':'type="checkbox" class="fe-real-factura-checkbox"'}
+        </div>
+    {/if}
+
+    {assign var="has_other_customfields" value=false}
     {if $customfields}
+        {foreach from=$customfields key=num item=customfield}
+            {if $customfield.name neq 'DNI' && $customfield.name neq 'RUC' && $customfield.name neq 'Deseo una factura (SUNAT PERÚ)'}
+                {assign var="has_other_customfields" value=true}
+            {/if}
+        {/foreach}
+    {/if}
+
+    {if $has_other_customfields}
         <h6 class="m-t-2x">{$LANG.orderadditionalrequiredinfo}<br><i><small class="text-lighter">{lang key='orderForm.requiredField'}</small></i></h6>
         <div class="row">
             {foreach from=$customfields key=num item=customfield}
+                {if $customfield.name eq 'DNI' || $customfield.name eq 'RUC' || $customfield.name eq 'Deseo una factura (SUNAT PERÚ)'}
+                    {continue}
+                {/if}
                 <div class="col-sm-6">
                     <div class="form-group">
                         {if $customfield.type eq 'tickbox'}

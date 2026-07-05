@@ -6,10 +6,16 @@ $RSThemes = RSThemeCAVars($tplvars);
 }
 if(function_exists('invoiceVars')){
     $RSThemes['rcinvoice'] = $rcinvoice;
-    $vars = invoiceVars($RSThemes);
-
-    foreach($vars as $var => $value){
-        $$var = $value;
+    try {
+        $vars = invoiceVars($RSThemes);
+        if (is_array($vars)) {
+            foreach($vars as $var => $value){
+                $$var = $value;
+            }
+        }
+    } catch (\Throwable $e) {
+        // Ignorar el error de compatibilidad "Call to undefined method WHMCS\Invoice::setID()"
+        // Esto permite que el PDF se genere con las variables por defecto de WHMCS sin explotar.
     }
 }
 if(isset($RSThemes['RSThemes']['pages']['invoicepdf'])){
